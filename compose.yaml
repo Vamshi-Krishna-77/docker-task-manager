@@ -3,5 +3,25 @@ services:
     image: mysql:8.0
     container_name: task-manager-db
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: taskmanager
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  flask:
+    build: .
+    container_name: task-manager-app
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      DB_NAME: ${MYSQL_DATABASE}
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:
